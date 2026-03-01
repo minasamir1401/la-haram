@@ -74,6 +74,11 @@ app.get('/api/participants', async (req, res) => {
     }
 });
 
+// Health check endpoint (for self-ping)
+app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+});
+
 // Global Error Handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -82,4 +87,15 @@ app.use((err, req, res, next) => {
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
+
+    // Self-ping every 2 minutes to prevent sleeping on free hosting
+    const APP_URL = process.env.APP_URL || `http://localhost:${port}`;
+    setInterval(() => {
+        const https = APP_URL.startsWith('https') ? require('https') : require('http');
+        https.get(`${APP_URL}/health`, (res) => {
+            console.log(`[Self-Ping] Status: ${res.statusCode} - ${new Date().toLocaleTimeString()}`);
+        }).on('error', (err) => {
+            console.error('[Self-Ping] Error:', err.message);
+        });
+    }, 2 * 60 * 1000); // كل 2 دقيقة
 });
