@@ -1,0 +1,26 @@
+{
+  "name": "alharam-store-backend",
+  "version": "1.0.0",
+  "description": "الهرم استور - مسابقة خلفية التطبيق",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.13.6",
+    "cloudinary": "^1.41.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "form-data": "^4.0.5",
+    "mongoose": "^9.2.3",
+    "multer": "^2.1.0",
+    "multer-storage-cloudinary": "^4.0.0",
+    "pg": "^8.20.0",
+    "sharp": "^0.34.5"
+  }
+}
