@@ -117,33 +117,31 @@ app.get('/api/participants', async (req, res) => {
     try {
         let allParticipants = [];
 
-        // 1. Fetch from MongoDB
+        // 1. Fetch from MongoDB (Optimized)
         if (mongoConnected) {
-            const mongoData = await Participant.find().lean();
+            const mongoData = await Participant.find().select('-image').lean(); // Skip images to save memory
             mongoData.forEach(p => {
                 allParticipants.push({
                     id: p._id,
                     name: p.name,
                     contact: p.contact,
-                    image: p.image,
                     createdAt: p.createdAt,
                     source: 'MongoDB'
                 });
             });
         }
 
-        // 2. Fetch from PostgreSQL (Only New Data)
+        // 2. Fetch from PostgreSQL (Optimized)
         if (pgConnected) {
             try {
-                const pgResult = await pgPool.query('SELECT * FROM participants ORDER BY created_at DESC');
+                const pgResult = await pgPool.query('SELECT id, name, contact, created_at FROM participants ORDER BY created_at DESC'); // Selective fields
                 pgResult.rows.forEach(p => {
                     allParticipants.push({
                         id: p.id,
                         name: p.name,
                         contact: p.contact,
-                        image: p.image,
                         createdAt: p.created_at,
-                        source: 'PostgreSQL (New)'
+                        source: 'PostgreSQL'
                     });
                 });
             } catch (error) {
