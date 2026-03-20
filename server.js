@@ -131,15 +131,17 @@ app.get('/api/participants', async (req, res) => {
             });
         }
 
-        // 2. Fetch from PostgreSQL (Optimized)
+        // 2. Fetch from PostgreSQL (Optimized but WITH Images)
         if (pgConnected) {
             try {
-                const pgResult = await pgPool.query('SELECT id, name, contact, created_at FROM participants ORDER BY created_at DESC'); // Selective fields
+                // Including 'image' field again but the server side ensures registrations are already compressed
+                const pgResult = await pgPool.query('SELECT id, name, contact, image, created_at FROM participants ORDER BY created_at DESC'); 
                 pgResult.rows.forEach(p => {
                     allParticipants.push({
                         id: p.id,
                         name: p.name,
                         contact: p.contact,
+                        image: p.image, // Now it's back!
                         createdAt: p.created_at,
                         source: 'PostgreSQL'
                     });
